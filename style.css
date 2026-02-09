@@ -1,14 +1,38 @@
+
 :root {
     --primary: #2563eb;
     --secondary: #64748b;
+
     --bg: #f1f5f9;
     --surface: #ffffff;
     --text: #1e293b;
+
     --danger: #ef4444;
     --success: #22c55e;
+
     --border: #e2e8f0;
+
     --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
 }
+
+
+body.dark {
+
+    --primary: #60a5fa;
+    --secondary: #94a3b8;
+
+    --bg: #0f172a;
+    --surface: #020617;
+    --text: #e5e7eb;
+
+    --danger: #f87171;
+    --success: #4ade80;
+
+    --border: #1e293b;
+
+    --shadow: 0 4px 10px rgb(0 0 0 / 0.6);
+}
+
 
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
 
