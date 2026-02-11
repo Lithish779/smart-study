@@ -1,4 +1,6 @@
 
+let taskChart = null;
+
 
 const app = {
 
@@ -8,21 +10,30 @@ const app = {
         schedule: []
     },
 
+
+
     init() {
+
         this.loadData();
         this.cacheDOM();
         this.bindEvents();
         this.renderAll();
         this.updateDate();
 
+        // Start Notifications
+        this.initNotifications();
+
         console.log("App Initialized");
     },
 
+
     cacheDOM() {
+
         this.views = document.querySelectorAll('.view');
         this.navBtns = document.querySelectorAll('.nav-btn');
         this.pageTitle = document.getElementById('page-title');
     },
+
 
     bindEvents() {
 
@@ -34,7 +45,9 @@ const app = {
 
                 this.switchView(target);
 
-                this.navBtns.forEach(b => b.classList.remove('active'));
+                this.navBtns.forEach(b =>
+                    b.classList.remove('active'));
+
                 e.target.classList.add('active');
 
             });
@@ -44,9 +57,11 @@ const app = {
     },
 
 
+
     loadData() {
 
-        const stored = localStorage.getItem('studyPlannerData');
+        const stored =
+            localStorage.getItem('studyPlannerData');
 
         if (stored) {
 
@@ -54,7 +69,8 @@ const app = {
 
                 this.data = JSON.parse(stored);
 
-                if (!this.data.schedule) this.data.schedule = [];
+                if (!this.data.schedule)
+                    this.data.schedule = [];
 
             } catch {
 
@@ -64,6 +80,7 @@ const app = {
 
         }
     },
+
 
     saveData() {
 
@@ -75,23 +92,25 @@ const app = {
         this.renderAll();
     },
 
+
     resetData() {
 
-        if (confirm('This will delete all data. Continue?')) {
+        if (!confirm('This will delete all data. Continue?'))
+            return;
 
-            localStorage.removeItem('studyPlannerData');
+        localStorage.removeItem('studyPlannerData');
 
-            this.data = {
-                subjects: [],
-                tasks: [],
-                schedule: []
-            };
+        this.data = {
+            subjects: [],
+            tasks: [],
+            schedule: []
+        };
 
-            location.reload();
-        }
+        location.reload();
     },
 
-  
+
+    
 
     switchView(viewName) {
 
@@ -102,22 +121,23 @@ const app = {
 
         });
 
+
         const activeView =
             document.getElementById(`${viewName}-view`);
 
-        if (activeView) {
+        if (!activeView) return;
 
-            activeView.classList.remove('hidden');
-            activeView.classList.add('active');
 
-            this.pageTitle.innerText =
-                viewName.charAt(0).toUpperCase() +
-                viewName.slice(1);
+        activeView.classList.remove('hidden');
+        activeView.classList.add('active');
 
-        }
+
+        this.pageTitle.innerText =
+            viewName.charAt(0).toUpperCase() +
+            viewName.slice(1);
     },
 
-  
+
 
     saveSubject() {
 
@@ -127,10 +147,12 @@ const app = {
         const credits =
             document.getElementById('subject-credits').value;
 
+
         if (!name) {
             alert('Subject name required');
             return;
         }
+
 
         this.data.subjects.push({
 
@@ -140,23 +162,28 @@ const app = {
 
         });
 
+
         this.saveData();
 
         closeModal('subject-modal');
+
 
         document.getElementById('subject-name').value = '';
         document.getElementById('subject-credits').value = '';
     },
 
+
     deleteSubject(id) {
 
         if (!confirm('Delete subject?')) return;
+
 
         this.data.subjects =
             this.data.subjects.filter(s => s.id !== id);
 
         this.saveData();
     },
+
 
 
     saveTask() {
@@ -170,6 +197,7 @@ const app = {
         const subjectId =
             document.getElementById('task-subject-select').value;
 
+
         if (!desc || !date) {
 
             alert('Fill all fields');
@@ -177,23 +205,28 @@ const app = {
 
         }
 
+
         this.data.tasks.push({
 
             id: Date.now(),
             desc,
             date,
             subjectId,
-            completed: false
+            completed: false,
+            notified: false   // Prevent duplicate alerts
 
         });
+
 
         this.saveData();
 
         closeModal('task-modal');
 
+
         document.getElementById('task-desc').value = '';
         document.getElementById('task-date').value = '';
     },
+
 
     toggleTask(id) {
 
@@ -202,12 +235,12 @@ const app = {
 
         if (!task) return;
 
+
         task.completed = !task.completed;
 
         this.saveData();
     },
 
-  
 
     saveSchedule() {
 
@@ -223,12 +256,14 @@ const app = {
         const activity =
             document.getElementById('schedule-activity').value;
 
+
         if (!day || !start || !end || !activity) {
 
             alert('Fill all fields');
             return;
 
         }
+
 
         this.data.schedule.push({
 
@@ -240,18 +275,22 @@ const app = {
 
         });
 
+
         this.data.schedule.sort(
             (a, b) => a.start.localeCompare(b.start)
         );
+
 
         this.saveData();
 
         closeModal('schedule-modal');
 
+
         document.getElementById('schedule-start').value = '';
         document.getElementById('schedule-end').value = '';
         document.getElementById('schedule-activity').value = '';
     },
+
 
     deleteSchedule(id) {
 
@@ -261,6 +300,8 @@ const app = {
         this.saveData();
     },
 
+
+ 
 
     renderAll() {
 
@@ -273,13 +314,16 @@ const app = {
 
     },
 
+
     renderDashboard() {
 
         document.getElementById('stat-total-subjects').innerText =
             this.data.subjects.length;
 
+
         document.getElementById('stat-pending-tasks').innerText =
             this.data.tasks.filter(t => !t.completed).length;
+
 
         const today =
             new Date().toLocaleDateString(
@@ -287,46 +331,15 @@ const app = {
                 { weekday: 'long' }
             );
 
+
         const sessions =
             this.data.schedule.filter(s => s.day === today).length;
 
+
         document.getElementById('stat-hours').innerText =
             sessions + ' sessions';
-
-        const list =
-            document.getElementById('dashboard-deadlines');
-
-        list.innerHTML = '';
-
-        const upcoming =
-            this.data.tasks
-                .filter(t => !t.completed)
-                .sort((a, b) => new Date(a.date) - new Date(b.date))
-                .slice(0, 3);
-
-        if (upcoming.length === 0) {
-
-            list.innerHTML =
-                '<li style="color:var(--secondary)">No deadlines</li>';
-
-            return;
-        }
-
-        upcoming.forEach(task => {
-
-            const li = document.createElement('li');
-
-            li.innerHTML = `
-                <span>${task.desc}</span>
-                <span style="color:var(--danger);font-size:0.8rem">
-                    ${task.date}
-                </span>
-            `;
-
-            list.appendChild(li);
-
-        });
     },
+
 
     renderSubjects() {
 
@@ -335,28 +348,32 @@ const app = {
 
         container.innerHTML = '';
 
+
         this.data.subjects.forEach(sub => {
 
             const div = document.createElement('div');
 
             div.className = 'card';
 
+
             div.innerHTML = `
+
                 <h3>${sub.name}</h3>
-                <p style="color:var(--secondary)">
-                    Priority: ${sub.credits}
-                </p>
-                <button
-                    class="btn-danger"
+                <p>Priority: ${sub.credits}</p>
+
+                <button class="btn-danger"
                     onclick="app.deleteSubject(${sub.id})">
                     Delete
                 </button>
+
             `;
+
 
             container.appendChild(div);
 
         });
     },
+
 
     renderTasks() {
 
@@ -365,29 +382,39 @@ const app = {
 
         list.innerHTML = '';
 
+
         this.data.tasks.forEach(task => {
 
             const li = document.createElement('li');
 
-            li.style.opacity = task.completed ? '0.5' : '1';
+            li.style.opacity =
+                task.completed ? '0.5' : '1';
+
 
             li.innerHTML = `
+
                 <div>
+
                     <strong>${task.desc}</strong>
-                    <div style="font-size:0.8rem;color:var(--secondary)">
-                        Due: ${task.date}
+
+                    <div style="font-size:0.8rem">
+                        Due: ${new Date(task.date).toLocaleString()}
                     </div>
+
                 </div>
 
                 <input type="checkbox"
                     ${task.completed ? 'checked' : ''}
                     onchange="app.toggleTask(${task.id})">
+
             `;
+
 
             list.appendChild(li);
 
         });
     },
+
 
     renderSchedule() {
 
@@ -396,12 +423,15 @@ const app = {
 
         container.innerHTML = '';
 
+
         const days = [
             'Monday','Tuesday','Wednesday',
             'Thursday','Friday','Saturday','Sunday'
         ];
 
+
         let hasData = false;
+
 
         days.forEach(day => {
 
@@ -410,50 +440,58 @@ const app = {
 
             if (!items.length) return;
 
+
             hasData = true;
+
 
             const card = document.createElement('div');
 
             card.className = 'card';
 
-            card.innerHTML =
-                `<h3 style="color:var(--primary)">${day}</h3>`;
+            card.innerHTML = `<h3>${day}</h3>`;
+
 
             items.forEach(item => {
 
                 const row = document.createElement('div');
 
-                row.style.cssText =
-                    'display:flex;justify-content:space-between;margin-bottom:6px';
+                row.style.display = 'flex';
+                row.style.justifyContent = 'space-between';
+
 
                 row.innerHTML = `
+
                     <span>
-                        <strong>${item.start}-${item.end}</strong>
-                        : ${item.activity}
+                        ${item.start}-${item.end} : ${item.activity}
                     </span>
 
                     <button
-                        onclick="app.deleteSchedule(${item.id})"
-                        style="background:none;border:none;color:red">
+                        onclick="app.deleteSchedule(${item.id})">
                         ×
                     </button>
+
                 `;
+
 
                 card.appendChild(row);
 
             });
 
+
             container.appendChild(card);
 
         });
 
+
         if (!hasData) {
 
             container.innerHTML =
-                '<p style="text-align:center;color:var(--secondary)">No schedule</p>';
+                '<p>No schedule</p>';
 
         }
     },
+
+
 
     renderAnalytics() {
 
@@ -462,15 +500,81 @@ const app = {
         const completed =
             this.data.tasks.filter(t => t.completed).length;
 
+        const pending = total - completed;
+
+
+        // Progress Bar
         const percent =
             total ? Math.round((completed / total) * 100) : 0;
+
 
         document.getElementById('analytics-progress').style.width =
             percent + '%';
 
         document.getElementById('analytics-text').innerText =
             percent + '% Tasks Completed';
+
+
+
+        // Chart
+        const ctx =
+            document.getElementById('taskChart');
+
+        if (!ctx) return;
+
+
+        if (taskChart) {
+            taskChart.destroy();
+        }
+
+
+        taskChart = new Chart(ctx, {
+
+            type: 'doughnut',
+
+            data: {
+
+                labels: ['Completed', 'Pending'],
+
+                datasets: [{
+
+                    data: [completed, pending],
+
+                    backgroundColor: [
+                        '#22c55e',
+                        '#ef4444'
+                    ],
+
+                    borderWidth: 1
+
+                }]
+
+            },
+
+
+            options: {
+
+                responsive: true,
+
+                plugins: {
+
+                    legend: {
+                        position: 'bottom'
+                    },
+
+                    title: {
+                        display: true,
+                        text: 'Task Status Overview'
+                    }
+
+                }
+
+            }
+
+        });
+
     },
+
 
     populateSubjectSelect() {
 
@@ -479,8 +583,10 @@ const app = {
 
         if (!select) return;
 
+
         select.innerHTML =
             '<option value="">Select Subject</option>';
+
 
         this.data.subjects.forEach(sub => {
 
@@ -494,37 +600,123 @@ const app = {
         });
     },
 
+
+   
+
     updateDate() {
 
-    const updateClock = () => {
+        const updateClock = () => {
 
-        const now = new Date();
+            const now = new Date();
 
-        const options = {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
+            const date =
+                now.toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+
+            const time =
+                now.toLocaleTimeString('en-US');
+
+
+            document.getElementById('date-display').innerText =
+                `${date} | ${time}`;
         };
 
-        const date =
-            now.toLocaleDateString('en-US', options);
 
-        const time =
-            now.toLocaleTimeString('en-US');
+        updateClock();
 
-        document.getElementById('date-display').innerText =
-            `${date} | ${time}`;
-    };
+        setInterval(updateClock, 1000);
+    },
 
-    
-    updateClock();
 
-    
-    setInterval(updateClock, 1000);
-}
+    initNotifications() {
+
+        if (!("Notification" in window)) {
+            console.warn("Notifications not supported");
+            return;
+        }
+
+
+        if (Notification.permission === "default") {
+            Notification.requestPermission();
+        }
+
+
+        this.notificationSound =
+            new Audio("notification.mp3");
+
+        this.notificationSound.volume = 0.7;
+
+
+        this.startTaskReminder();
+    },
+
+
+    startTaskReminder() {
+
+        setInterval(() => {
+
+            const now = new Date();
+
+
+            this.data.tasks.forEach(task => {
+
+                if (task.completed) return;
+                if (task.notified) return;
+
+
+                const taskTime =
+                    new Date(task.date);
+
+                const diff =
+                    taskTime - now;
+
+
+                // Alert 10 minutes before
+                if (diff > 0 && diff <= 10 * 60 * 1000) {
+
+                    this.sendNotification(task);
+
+                    task.notified = true;
+
+                    this.saveData();
+                }
+
+            });
+
+        }, 60000); // Every minute
+    },
+
+
+    sendNotification(task) {
+
+        if (Notification.permission !== "granted")
+            return;
+
+
+        new Notification("📚 Study Reminder", {
+
+            body:
+                `Task: ${task.desc}\nDue at: ${new Date(task.date).toLocaleTimeString()}`
+
+        });
+
+
+        if (this.notificationSound) {
+
+            this.notificationSound
+                .play()
+                .catch(() => {});
+
+        }
+    }
 
 };
+
+
 
 
 
@@ -532,25 +724,33 @@ function openModal(id) {
 
     const modal = document.getElementById(id);
 
-    if (modal) modal.classList.remove('hidden');
+    if (modal)
+        modal.classList.remove('hidden');
 }
+
 
 function closeModal(id) {
 
     const modal = document.getElementById(id);
 
-    if (modal) modal.classList.add('hidden');
+    if (modal)
+        modal.classList.add('hidden');
 }
+
 
 
 
 function initTheme() {
 
-    const btn = document.getElementById('theme-toggle');
+    const btn =
+        document.getElementById('theme-toggle');
 
     if (!btn) return;
 
-    const saved = localStorage.getItem('theme');
+
+    const saved =
+        localStorage.getItem('theme');
+
 
     if (saved === 'dark') {
 
@@ -559,9 +759,11 @@ function initTheme() {
 
     }
 
+
     btn.addEventListener('click', () => {
 
         document.body.classList.toggle('dark');
+
 
         if (document.body.classList.contains('dark')) {
 
@@ -574,8 +776,10 @@ function initTheme() {
             btn.innerText = '🌙 Dark';
 
         }
+
     });
 }
+
 
 
 

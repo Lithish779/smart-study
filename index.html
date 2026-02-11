@@ -3,151 +3,334 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Study Planner</title>
+
+    <title>EduScheduler – Digital Study Planner</title>
+
+    
     <link rel="stylesheet" href="style.css">
+
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 <body>
-    <div class="app-container">
-        <aside class="sidebar">
-            <div class="brand">
-                <h2>📚  StudyPlan</h2>
+
+<div class="app-container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="brand">
+            <h2>📚 EduScheduler</h2>
+            <p>Study • Plan • Succeed</p>
+        </div>
+
+        <nav>
+
+            <button class="nav-btn active" data-target="dashboard">Dashboard</button>
+            <button class="nav-btn" data-target="subjects">Subjects</button>
+            <button class="nav-btn" data-target="schedule">Schedule</button>
+            <button class="nav-btn" data-target="tasks">Tasks</button>
+            <button class="nav-btn" data-target="analytics">Analytics</button>
+            <button class="nav-btn" data-target="settings">Settings</button>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+
+        <!-- HEADER -->
+        <header>
+
+            <h1 id="page-title">Dashboard</h1>
+
+            <div class="header-actions">
+
+                <div id="date-display"></div>
+
+                <button id="theme-toggle" class="btn-secondary">
+                    🌙 Dark
+                </button>
+
             </div>
-            <nav>
-                <button class="nav-btn active" data-target="dashboard">Dashboard</button>
-                <button class="nav-btn" data-target="subjects">Subjects</button>
-                <button class="nav-btn" data-target="schedule">Schedule</button>
-                <button class="nav-btn" data-target="tasks">Tasks</button>
-                <button class="nav-btn" data-target="analytics">Analytics</button>
-                <button class="nav-btn" data-target="settings">Settings</button>
-            </nav>
-        </aside>
 
-        <main class="content">
-            <header>
-                <h1 id="page-title">Dashboard</h1>
+        </header>
 
-    <div style="display:flex; align-items:center; gap:15px;">
-        <div id="date-display"></div>
 
-        <button id="theme-toggle" class="btn-secondary">
-            🌙 Dark
-        </button>
-    </div>
-            </header>
+        <!-- VIEWS -->
+        <div id="view-container">
 
-            <div id="view-container">
-                <div id="dashboard-view" class="view active">
-                    <div class="stats-grid">
-                        <div class="card stat-card">
-                            <h3>Total Subjects</h3>
-                            <p id="stat-total-subjects">0</p>
-                        </div>
-                        <div class="card stat-card">
-                            <h3>Pending Tasks</h3>
-                            <p id="stat-pending-tasks">0</p>
-                        </div>
-                        <div class="card stat-card">
-                            <h3>Sessions (Today)</h3>
-                            <p id="stat-hours">0</p>
-                        </div>
+            <!-- DASHBOARD -->
+            <div id="dashboard-view" class="view active">
+
+                <div class="stats-grid">
+
+                    <div class="card stat-card">
+                        <h3>Total Subjects</h3>
+                        <p id="stat-total-subjects">0</p>
                     </div>
+
+                    <div class="card stat-card">
+                        <h3>Pending Tasks</h3>
+                        <p id="stat-pending-tasks">0</p>
+                    </div>
+
+                    <div class="card stat-card">
+                        <h3>Sessions Today</h3>
+                        <p id="stat-hours">0</p>
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>Upcoming Deadlines</h3>
+
+                    <ul id="dashboard-deadlines" class="list-group"></ul>
+
+                </div>
+
+            </div>
+
+
+            <!-- SUBJECTS -->
+            <div id="subjects-view" class="view hidden">
+
+                <div class="action-bar">
+
+                    <button class="btn-primary"
+                        onclick="openModal('subject-modal')">
+                        + Add Subject
+                    </button>
+
+                </div>
+
+                <div id="subjects-list" class="grid-list"></div>
+
+            </div>
+
+
+            <!-- SCHEDULE -->
+            <div id="schedule-view" class="view hidden">
+
+                <div class="action-bar">
+
+                    <button class="btn-primary"
+                        onclick="openModal('schedule-modal')">
+                        + Add Session
+                    </button>
+
+                </div>
+
+                <div class="schedule-grid" id="schedule-list"></div>
+
+            </div>
+
+
+            <!-- TASKS -->
+            <div id="tasks-view" class="view hidden">
+
+                <div class="action-bar">
+
+                    <button class="btn-primary"
+                        onclick="openModal('task-modal')">
+                        + Add Task
+                    </button>
+
+                </div>
+
+                <ul id="tasks-list" class="list-group"></ul>
+
+            </div>
+
+
+            <!-- ANALYTICS -->
+            <div id="analytics-view" class="view hidden">
+
+                <div class="analytics-grid">
+
+                    <!-- Progress -->
                     <div class="card">
-                        <h3>Upcoming Deadlines</h3>
-                        <ul id="dashboard-deadlines" class="list-group"></ul>
-                    </div>
-                </div>
 
-                <div id="subjects-view" class="view hidden">
-                    <div class="action-bar">
-                        <button class="btn-primary" onclick="openModal('subject-modal')">+ Add Subject</button>
-                    </div>
-                    <div id="subjects-list" class="grid-list"></div>
-                </div>
-
-                <div id="schedule-view" class="view hidden">
-                    <div class="action-bar">
-                         <button class="btn-primary" onclick="openModal('schedule-modal')">+ Add Session</button>
-                    </div>
-                    <div class="schedule-grid" id="schedule-list">
-                        </div>
-                </div>
-
-                <div id="tasks-view" class="view hidden">
-                    <div class="action-bar">
-                        <button class="btn-primary" onclick="openModal('task-modal')">+ Add Task</button>
-                    </div>
-                    <ul id="tasks-list" class="list-group"></ul>
-                </div>
-
-                <div id="analytics-view" class="view hidden">
-                    <div class="card">
                         <h3>Task Completion Rate</h3>
+
                         <div class="progress-bar-container">
                             <div id="analytics-progress" class="progress-bar"></div>
                         </div>
+
                         <p id="analytics-text">0% Completed</p>
-                    </div>
-                </div>
 
-                <div id="settings-view" class="view hidden">
+                    </div>
+
+
+                    <!-- Chart -->
                     <div class="card">
-                        <h3>Data Management</h3>
-                        <p>Clear all local data. This action cannot be undone.</p>
-                        <button class="btn-danger" onclick="app.resetData()">Reset Application Data</button>
+
+                        <h3>Productivity Overview</h3>
+
+                        <canvas id="taskChart" height="220"></canvas>
+
                     </div>
+
                 </div>
-            </div>
-        </main>
-    </div>
 
-    <div id="subject-modal" class="modal hidden">
-        <div class="modal-content">
-            <h3>Add Subject</h3>
-            <input type="text" id="subject-name" placeholder="Subject Name (e.g., Data Structures)">
-            <input type="number" id="subject-credits" placeholder="Credits/Priority">
-            <div class="modal-actions">
-                <button class="btn-primary" onclick="app.saveSubject()">Save</button>
-                <button class="btn-secondary" onclick="closeModal('subject-modal')">Cancel</button>
             </div>
+
+
+            <!-- SETTINGS -->
+            <div id="settings-view" class="view hidden">
+
+                <div class="card">
+
+                    <h3>System Settings</h3>
+
+                    <p>
+                        This will permanently delete all saved data
+                        from your browser.
+                    </p>
+
+                    <button class="btn-danger"
+                        onclick="app.resetData()">
+
+                        Reset Application Data
+
+                    </button>
+
+                </div>
+
+            </div>
+
         </div>
-    </div>
 
-    <div id="task-modal" class="modal hidden">
-        <div class="modal-content">
-            <h3>Add Task</h3>
-            <input type="text" id="task-desc" placeholder="Task Description">
-            <input type="date" id="task-date">
-            <select id="task-subject-select"></select>
-            <div class="modal-actions">
-                <button class="btn-primary" onclick="app.saveTask()">Save</button>
-                <button class="btn-secondary" onclick="closeModal('task-modal')">Cancel</button>
-            </div>
+    </main>
+
+</div>
+
+
+<!-- SUBJECT MODAL -->
+<div id="subject-modal" class="modal hidden">
+
+    <div class="modal-content">
+
+        <h3>Add Subject</h3>
+
+        <input type="text"
+            id="subject-name"
+            placeholder="Subject Name">
+
+        <input type="number"
+            id="subject-credits"
+            placeholder="Credits / Priority">
+
+        <div class="modal-actions">
+
+            <button class="btn-primary"
+                onclick="app.saveSubject()">
+                Save
+            </button>
+
+            <button class="btn-secondary"
+                onclick="closeModal('subject-modal')">
+                Cancel
+            </button>
+
         </div>
+
     </div>
 
-    <div id="schedule-modal" class="modal hidden">
-        <div class="modal-content">
-            <h3>Add Study Session</h3>
-            <select id="schedule-day">
-                <option value="Monday">Monday</option>
-                <option value="Tuesday">Tuesday</option>
-                <option value="Wednesday">Wednesday</option>
-                <option value="Thursday">Thursday</option>
-                <option value="Friday">Friday</option>
-                <option value="Saturday">Saturday</option>
-                <option value="Sunday">Sunday</option>
-            </select>
-            <input type="time" id="schedule-start">
-            <input type="time" id="schedule-end">
-            <input type="text" id="schedule-activity" placeholder="Activity / Subject">
-            <div class="modal-actions">
-                <button class="btn-primary" onclick="app.saveSchedule()">Save Session</button>
-                <button class="btn-secondary" onclick="closeModal('schedule-modal')">Cancel</button>
-            </div>
+</div>
+
+
+<!-- TASK MODAL -->
+<div id="task-modal" class="modal hidden">
+
+    <div class="modal-content">
+
+        <h3>Add Task</h3>
+
+        <input type="text"
+            id="task-desc"
+            placeholder="Task Description">
+
+        <!-- IMPORTANT: datetime for reminders -->
+        <input type="datetime-local"
+            id="task-date">
+
+        <select id="task-subject-select"></select>
+
+        <div class="modal-actions">
+
+            <button class="btn-primary"
+                onclick="app.saveTask()">
+                Save
+            </button>
+
+            <button class="btn-secondary"
+                onclick="closeModal('task-modal')">
+                Cancel
+            </button>
+
         </div>
+
     </div>
 
-    <script src="script.js"></script>
+</div>
+
+
+<!-- SCHEDULE MODAL -->
+<div id="schedule-modal" class="modal hidden">
+
+    <div class="modal-content">
+
+        <h3>Add Study Session</h3>
+
+        <select id="schedule-day">
+
+            <option>Monday</option>
+            <option>Tuesday</option>
+            <option>Wednesday</option>
+            <option>Thursday</option>
+            <option>Friday</option>
+            <option>Saturday</option>
+            <option>Sunday</option>
+
+        </select>
+
+        <input type="time" id="schedule-start">
+        <input type="time" id="schedule-end">
+
+        <input type="text"
+            id="schedule-activity"
+            placeholder="Activity / Subject">
+
+        <div class="modal-actions">
+
+            <button class="btn-primary"
+                onclick="app.saveSchedule()">
+                Save Session
+            </button>
+
+            <button class="btn-secondary"
+                onclick="closeModal('schedule-modal')">
+                Cancel
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- MAIN SCRIPT -->
+<script src="script.js"></script>
+
 </body>
 </html>
