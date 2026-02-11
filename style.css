@@ -1,19 +1,21 @@
-
 :root {
-    --primary: #2563eb;
-    --secondary: #64748b;
+  
 
-    --bg: #f1f5f9;
-    --surface: #ffffff;
-    --text: #1e293b;
+    --primary: #38bdf8;    
+    --secondary: #7dd3fc;   
+
+    --bg: #c0dff3;          
+    --surface: #f0f9ff;    
+    --text: #0f172a;        
 
     --danger: #ef4444;
     --success: #22c55e;
 
-    --border: #e2e8f0;
+    --border: #bae6fd;      
 
-    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --shadow: 0 4px 6px -1px rgb(56 189 248 / 0.2);
 }
+
 
 
 body.dark {
@@ -80,3 +82,127 @@ input, select { width: 100%; padding: 0.75rem; border: 1px solid var(--border); 
 .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; }
 .modal-content { background: var(--surface); padding: 2rem; border-radius: 12px; width: 400px; }
 .modal-actions { display: flex; gap: 1rem; justify-content: flex-end; }
+
+
+.nav-btn[data-color] {
+    background: #f8fafc;          
+    border-left: 4px solid transparent;
+    margin-bottom: 8px;
+}
+
+
+
+
+.nav-btn[data-color="blue"] {
+    background: #eff6ff;
+    border-left-color: #0a54f3;
+    color: #2563eb;
+}
+
+
+
+
+.nav-btn[data-color="green"] {
+    background: #ecfdf5;
+    border-left-color: #16a34a;
+    color: #16a34a;
+}
+
+
+
+
+.nav-btn[data-color="purple"] {
+    background: #f5f3ff;
+    border-left-color: #7c3aed;
+    color: #7c3aed;
+}
+
+
+
+
+.nav-btn[data-color="orange"] {
+    background: #fff7ed;
+    border-left-color: #ea580c;
+    color: #ea580c;
+}
+
+
+
+.nav-btn[data-color="red"] {
+    background: #fef2f2;
+    border-left-color: #dc2626;
+    color: #dc2626;
+}
+
+
+
+.nav-btn[data-color="gray"] {
+    background: #f8fafc;
+    border-left-color: #475569;
+    color: #475569;
+}
+
+
+
+
+.nav-btn.active {
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+
+
+
+.nav-btn[data-color]:hover {
+    transform: translateX(3px);
+    filter: brightness(0.97);
+    transition: all 0.2s ease;
+}
+
+
+@media (max-width: 768px) {
+
+   
+    .brand h2 {
+        font-size: 1.2rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .brand p {
+        font-size: 0.75rem;
+        margin-bottom: 0.6rem;
+    }
+
+    
+    .sidebar {
+        padding: 0.5rem 0.7rem;
+    }
+
+   
+    .nav-btn {
+        padding: 0.45rem 0.6rem;
+        font-size: 0.8rem;
+        border-radius: 6px;
+    }
+
+   
+    header h1 {
+        font-size: 1.4rem;
+    }
+
+    #date-display {
+        font-size: 0.75rem;
+    }
+
+   
+    .stat-card {
+        padding: 1rem;
+        font-size: 0.9rem;
+    }
+
+    .card h3 {
+        font-size: 1rem;
+    }
+}
+
+
